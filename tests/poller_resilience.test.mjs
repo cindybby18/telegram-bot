@@ -67,7 +67,7 @@ test("poller initializes and handles cold start when cursor file is missing", as
   assert.equal(status.running, true);
   assert.equal(status.targets.length, 2);
   poller.stop();
-  await rm(dir, { recursive: true, force: true });
+  await rm(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 });
 });
 
 test("poller persists cursor upon successful cycle and reloads upon restart", async () => {
@@ -102,7 +102,7 @@ test("poller persists cursor upon successful cycle and reloads upon restart", as
   assert.equal(marketTarget.cursor, CURSOR_1999);
   poller2.stop();
 
-  await rm(dir, { recursive: true, force: true });
+  await rm(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 });
 });
 
 test("poller continues and does not lose cursor state during transient RPC failures", async () => {
@@ -133,7 +133,7 @@ test("poller continues and does not lose cursor state during transient RPC failu
   assert.match(status.lastError.message, /RPC Connection Refused/);
 
   poller.stop();
-  await rm(dir, { recursive: true, force: true });
+  await rm(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 });
 });
 
 test("poller logs and handles Telegram send retries/failures without stalling cursor", async () => {
@@ -185,7 +185,7 @@ test("poller logs and handles Telegram send retries/failures without stalling cu
   assert.equal(marketTarget.cursor, CURSOR_1999);
 
   poller.stop();
-  await rm(dir, { recursive: true, force: true });
+  await rm(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 });
 });
 
 test("poller circuit breaker opens after consecutive RPC failures", async () => {
@@ -219,7 +219,7 @@ test("poller circuit breaker opens after consecutive RPC failures", async () => 
   assert.ok(status.circuitBreaker.openedAt !== null, "openedAt should be set");
 
   poller.stop();
-  await rm(dir, { recursive: true, force: true });
+  await rm(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 });
 });
 
 test("poller circuit breaker skips RPC calls when open", async () => {
@@ -261,7 +261,7 @@ test("poller circuit breaker skips RPC calls when open", async () => {
   assert.ok(callsAfterCooldown <= callsAtOpen + 1, "RPC calls should be skipped while circuit is open");
 
   poller.stop();
-  await rm(dir, { recursive: true, force: true });
+  await rm(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 });
 });
 
 test("poller circuit breaker closes after cooldown and successful RPC", async () => {
@@ -303,7 +303,7 @@ test("poller circuit breaker closes after cooldown and successful RPC", async ()
   assert.equal(statusClosed.circuitBreaker.failureCount, 0, "failure count should reset");
 
   poller.stop();
-  await rm(dir, { recursive: true, force: true });
+  await rm(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 });
 });
 
 test("poller circuit breaker resets on successful RPC before threshold", async () => {
@@ -339,5 +339,5 @@ test("poller circuit breaker resets on successful RPC before threshold", async (
   assert.equal(status.circuitBreaker.failureCount, 0, "failure count should reset after success");
 
   poller.stop();
-  await rm(dir, { recursive: true, force: true });
+  await rm(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 });
 });
